@@ -1,4 +1,7 @@
 package lu.saldanha.sudoku
+import lu.saldanha.sudoku.parse.PositionLoader
+import lu.saldanha.sudoku.board.BoardI
+import lu.saldanha.sudoku.board.BoardPosition
 
 object SudokuSolver {
   def main(args: Array[String]) = {

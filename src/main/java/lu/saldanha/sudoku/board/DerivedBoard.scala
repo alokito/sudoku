@@ -1,4 +1,4 @@
-package lu.saldanha.sudoku
+package lu.saldanha.sudoku.board
 
 class DerivedBoard(val play:BoardPosition, val underlying:BoardI) extends BoardI {
   def getCell(row:Int, col:Int):Option[Int] =

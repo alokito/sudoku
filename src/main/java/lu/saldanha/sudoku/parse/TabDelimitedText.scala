@@ -1,4 +1,4 @@
-package lu.saldanha.sudoku
+package lu.saldanha.sudoku.parse
 
 object TabDelimitedText {
 	/**

@@ -1,4 +1,9 @@
-package lu.saldanha.sudoku
+package lu.saldanha.sudoku.board
+
+object BoardI {
+  def getEmptyBoard() = EmptyBoard
+  def getBoardPosition(row:Int, col:Int, value:Int) = new BoardPosition(row, col, value)
+}
 
 abstract class BoardI {
   // these two are abstract
