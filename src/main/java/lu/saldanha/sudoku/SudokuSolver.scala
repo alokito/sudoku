@@ -24,8 +24,11 @@ object SudokuSolver {
         throw new Exception("Could not find unique position!")
       else
     	board
-    else
+    else {
+      println(board)
+      println("possible moves: " + (uniquePlays.head.toString /: uniquePlays.tail) ( _ + ", " + _))
       solve(places.filterNot(x => x._1 == uniquePlays(0).row && x._2 == uniquePlays(0).col),
           board.deriveBoard(uniquePlays(0)))
+    }
   }
 }

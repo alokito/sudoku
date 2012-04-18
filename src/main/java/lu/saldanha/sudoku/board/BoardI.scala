@@ -42,10 +42,9 @@ abstract class BoardI {
       Nil
     else
         x :: makeInts(x - 1)
-  private def emptyPlaceList:List[Tuple2[Int,Int]] = Nil
   private def allPlaces:List[Tuple2[Int,Int]] = {
       val ints = makeInts(getSize())
-      (emptyPlaceList /: ints.map(x => ints.map(y => new Tuple2(x,y)))) (_ ::: _)
+      ints.flatMap( x => ints.map(y => new Tuple2(x,y)))
     }
 
   private def summarizeCell(row:Int, col:Int):String =
