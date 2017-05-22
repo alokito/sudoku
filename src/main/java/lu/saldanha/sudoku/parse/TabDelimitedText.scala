@@ -22,16 +22,16 @@ object TabDelimitedText {
 		  row
 
 	private def parseToQuote(row:List[String], iter:Iterator[String]):List[String] =
-		if (row.size > 1 || row.first.endsWith("\""))
+		if (row.size > 1 || row.head.endsWith("\""))
 			parseToRow(row, iter);
 		else
 			glueLastFirst(row, parseToQuote(nextRow(iter), iter)) 
 
 	private def nextRow(iter:Iterator[String]):List[String] = 
-		iter.next().split("\t").elements.toList
+		List.fromArray(iter.next().split("\t"))
 	
 	private def glueLastFirst(row:List[String], rest:List[String]):List[String] = {
-		val middlePart:String = row.last + " " + rest.first
+		val middlePart:String = row.last + " " + rest.head
 		row.init :::  (middlePart :: rest.tail) 
 	}
 }
