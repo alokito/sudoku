@@ -7,12 +7,13 @@ object BoardI {
 
 abstract class BoardI {
   // these two are abstract
+  def getCell(t:Tuple2[Int, Int]):Option[Int] = getCell(t._1,t._2)
   def getCell(row:Int, col:Int):Option[Int]
   def isValid():Boolean
   
   def getSize():Int = 9
   def emptyPlaces:List[Tuple2[Int,Int]] =
-    allPlaces.filter(x => getCell(x._1, x._2) match {
+    allPlaces.filter(x => getCell(x) match {
       case Some(y) => false
       case None => true
     })
@@ -24,25 +25,56 @@ abstract class BoardI {
     var separator = makeSeparator(size)
     (rowSummary.head /: rowSummary.tail) (_  + _ )
   }
-  def possiblePlays(place:Tuple2[Int,Int]):List[BoardPosition] = {
-    val plays = makeInts(getSize()).map(new BoardPosition(place._1, place._2,_));
-    val possible = plays.filter(deriveBoard(_).isValid())
+
+  /**
+    * Moves that would result in a valid board for the specified position
+    *
+    * @param place
+    * @return
+    */
+  def movesForPosition(place:Tuple2[Int,Int]):List[BoardPosition] = {
+    val moves = makeInts(getSize()).map(new BoardPosition(place._1, place._2,_));
+    val possible = moves.filter(deriveBoard(_).isValid())
     possible
   }
-  
-  def deriveBoard(position:BoardPosition) =
+
+  def movesUniqueWithinRegions():List[BoardPosition] = {
+    val ints = makeInts(getSize())
+    val moves:List[BoardPosition] = ints.flatMap(i => allRegions
+      .filter(!_.containsValue(i))
+      .map(_.locationsForInt(i))
+      .find(_.size == 1) match {
+        case Some(boardPosition) => boardPosition
+        case None => Nil
+      })
+    moves
+  }
+
+
+
+  def deriveBoard(position:BoardPosition):BoardI =
     getCell(position.row,position.col) match {
       case Some(x) => throw new Exception("Error: Cannot set position " +
           position.toString()+" becuase it already has value " + x)
       case None => 
         new DerivedBoard(position, this)
     }
+
+
+
+  private def allRegions:List[BoardRegion]
+    = makeInts(getSize()).flatMap(i => List(allPlacesInQuad(i), allPlacesInRow(i), allPlacesInCol(i))).map(new BoardRegion(_,this))
+
+  private def allPlacesInQuad(quad:Int):List[Tuple2[Int,Int]] = allPlaces.filter(p => getQuad(p._1, p._2) == quad)
+  private def allPlacesInRow(row:Int):List[Tuple2[Int,Int]] = allPlaces.filter(p => p._1 == row)
+  private def allPlacesInCol(col:Int):List[Tuple2[Int,Int]] = allPlaces.filter(p => p._1 == col)
+
   private def makeInts(x:Int):List[Int] =
     if (x == 0)
       Nil
     else
         x :: makeInts(x - 1)
-  private def allPlaces:List[Tuple2[Int,Int]] = {
+  private val allPlaces:List[Tuple2[Int,Int]] = {
       val ints = makeInts(getSize())
       ints.flatMap( x => ints.map(y => new Tuple2(x,y)))
     }
@@ -82,6 +114,7 @@ abstract class BoardI {
       case None => false
     }).size
   }
+
   def getQuad(row:Int, col:Int) =
     (col-1) /3 + 3 * ((row -1 )/3) + 1
   
